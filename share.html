@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit Recipe | Savory</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#FF7A50',secondary:'#4A6FA5'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #FDFBF9;
+}
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.custom-checkbox {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #E5E7EB;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.custom-checkbox:checked {
+  background-color: #FF7A50;
+  border-color: #FF7A50;
+}
+.custom-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.custom-file-upload {
+  display: inline-block;
+  cursor: pointer;
+}
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+.search-input:focus {
+  outline: none;
+}
+.custom-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1.5em 1.5em;
+}
+</style>
+</head>
+<body>
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+    <a href="#" class="text-3xl font-['Pacifico'] text-primary flex items-center gap-2">
+      <div class="w-8 h-8 flex items-center justify-center">
+        <i class="ri-restaurant-2-line"></i>
+      </div>
+      Savory
+    </a>
+    <div class="relative w-full max-w-md mx-4">
+      <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+        <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+          <i class="ri-search-line"></i>
+        </div>
+      </div>
+      <input id="searchInput" type="text" class="search-input w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded text-sm" placeholder="Search for recipes...">
+      <div id="clearSearch" class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer hidden">
+        <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+          <i class="ri-close-line"></i>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="index.html" data-readdy="true">
+        <button class="bg-white border border-gray-200 text-gray-700 px-4 py-2 !rounded-button whitespace-nowrap hover:bg-gray-50">
+          <i class="ri-arrow-left-line mr-1"></i> Back to Recipes
+        </button>
+      </a>
+      <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
+        <i class="ri-user-line text-gray-600"></i>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="container mx-auto px-4 py-8 mb-16">
+  <div class="max-w-4xl mx-auto">
+    <div class="mb-8 text-center">
+      <h1 class="text-4xl font-bold mb-3">Share Your Recipe</h1>
+      <p class="text-gray-600">Share your culinary masterpiece with our community of food enthusiasts</p>
+    </div>
+    
+    <form id="recipeForm" class="bg-white rounded-lg shadow-sm p-8">
+      <!-- Basic Information Section -->
+      <div class="mb-10">
+        <h2 class="text-2xl font-bold mb-6 pb-2 border-b border-gray-100">Basic Information</h2>
+        
+        <div class="mb-6">
+          <label for="recipeTitle" class="block text-gray-700 font-medium mb-2">Recipe Title <span class="text-primary">*</span></label>
+          <input type="text" id="recipeTitle" name="recipeTitle" class="w-full px-4 py-3 border border-gray-200 rounded text-gray-700" placeholder="e.g. Creamy Tuscan Chicken Pasta" required>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label for="recipeCategory" class="block text-gray-700 font-medium mb-2">Category <span class="text-primary">*</span></label>
+            <div class="relative">
+              <select id="recipeCategory" name="recipeCategory" class="custom-select w-full px-4 py-3 border border-gray-200 rounded text-gray-700 bg-white pr-8" required>
+                <option value="" disabled selected>Select a category</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Desserts">Desserts</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Appetizers">Appetizers</option>
+                <option value="Soups">Soups</option>
+                <option value="Salads">Salads</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label for="recipeDifficulty" class="block text-gray-700 font-medium mb-2">Difficulty Level</label>
+            <div class="relative">
+              <select id="recipeDifficulty" name="recipeDifficulty" class="custom-select w-full px-4 py-3 border border-gray-200 rounded text-gray-700 bg-white pr-8">
+                <option value="" disabled selected>Select difficulty</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <label for="recipeDescription" class="block text-gray-700 font-medium mb-2">Short Description <span class="text-primary">*</span></label>
+          <textarea id="recipeDescription" name="recipeDescription" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded text-gray-700 resize-none" placeholder="Briefly describe your recipe in 2-3 sentences" required></textarea>
+          <div class="text-right text-sm text-gray-500 mt-1"><span id="descriptionCount">0</span>/200 characters</div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label for="prepTime" class="block text-gray-700 font-medium mb-2">Prep Time (minutes) <span class="text-primary">*</span></label>
+            <div class="relative">
+              <input type="number" id="prepTime" name="prepTime" min="1" class="w-full px-4 py-3 border border-gray-200 rounded text-gray-700" placeholder="e.g. 15" required>
+            </div>
+          </div>
+          <div>
+            <label for="cookTime" class="block text-gray-700 font-medium mb-2">Cook Time (minutes) <span class="text-primary">*</span></label>
+            <div class="relative">
+              <input type="number" id="cookTime" name="cookTime" min="0" class="w-full px-4 py-3 border border-gray-200 rounded text-gray-700" placeholder="e.g. 30" required>
+            </div>
+          </div>
+          <div>
+            <label for="servings" class="block text-gray-700 font-medium mb-2">Servings <span class="text-primary">*</span></label>
+            <div class="relative">
+              <input type="number" id="servings" name="servings" min="1" class="w-full px-4 py-3 border border-gray-200 rounded text-gray-700" placeholder="e.g. 4" required>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Ingredients Section -->
+      <div class="mb-10">
+        <h2 class="text-2xl font-bold mb-6 pb-2 border-b border-gray-100">Ingredients</h2>
+        <p class="text-gray-600 mb-4">List all ingredients needed for your recipe. Be specific with amounts and measurements.</p>
+        
+        <div id="ingredientsContainer">
+          <div class="ingredient-item mb-3 flex items-center">
+            <input type="text" name="ingredients[]" class="flex-grow px-4 py-3 border border-gray-200 rounded text-gray-700" placeholder="e.g. 2 tablespoons olive oil" required>
+            <button type="button" class="remove-ingredient ml-2 text-gray-400 hover:text-gray-600 hidden">
+              <div class="w-8 h-8 flex items-center justify-center">
+                <i class="ri-delete-bin-line"></i>
+              </div>
+            </button>
+          </div>
+          <div class="ingredient-item mb-3 flex items-center">
+            <input type="text" name="ingredients[]" class="flex-grow px-4 py-3 border border-gray-200 rounded text-gray-700" placeholder="e.g. 1 large onion, diced" required>
+            <button type="button" class="remove-ingredient ml-2 text-gray-400 hover:text-gray-600">
+              <div class="w-8 h-8 flex items-center justify-center">
+                <i class="ri-delete-bin-line"></i>
+              </div>
+            </button>
+          </div>
+          <div class="ingredient-item mb-3 flex items-center">
+            <input type="text" name="ingredients[]" class="flex-grow px-4 py-3 border border-gray-200 rounded text-gray-700" placeholder="e.g. 2 cloves garlic, minced" required>
+            <button type="button" class="remove-ingredient ml-2 text-gray-400 hover:text-gray-600">
+              <div class="w-8 h-8 flex items-center justify-center">
+                <i class="ri-delete-bin-line"></i>
+              </div>
+            </button>
+          </div>
+        </div>
+        
+        <button type="button" id="addIngredient" class="mt-3 flex items-center text-primary hover:text-primary/80 font-medium">
+          <div class="w-5 h-5 flex items-center justify-center mr-1">
+            <i class="ri-add-line"></i>
+          </div>
+          Add Another Ingredient
+        </button>
+      </div>
+      
+      <!-- Instructions Section -->
+      <div class="mb-10">
+        <h2 class="text-2xl font-bold mb-6 pb-2 border-b border-gray-100">Instructions</h2>
+        <p class="text-gray-600 mb-4">Provide clear step-by-step instructions for preparing your recipe.</p>
+        
+        <div id="instructionsContainer">
+          <div class="instruction-item mb-4 flex">
+            <div class="flex-shrink-0 mr-3 mt-3">
+              <div class="w-8 h-8 bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary font-semibold">
+                1
+              </div>
+            </div>
+            <div class="flex-grow">
+              <textarea name="instructions[]" rows="2" class="w-full px-4 py-3 border border-gray-200 rounded text-gray-700 resize-none" placeholder="Describe the first step of your recipe..." required></textarea>
+              <button type="button" class="remove-instruction mt-1 text-gray-400 hover:text-gray-600 hidden">
+                <div class="w-6 h-6 flex items-center justify-center">
+                  <i class="ri-delete-bin-line"></i>
+                </div>
+                Remove
+              </button>
+            </div>
+          </div>
+          <div class="instruction-item mb-4 flex">
+            <div class="flex-shrink-0 mr-3 mt-3">
+              <div class="w-8 h-8 bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary font-semibold">
+                2
+              </div>
+            </div>
+            <div class="flex-grow">
+              <textarea name="instructions[]" rows="2" class="w-full px-4 py-3 border border-gray-200 rounded text-gray-700 resize-none" placeholder="Describe the next step of your recipe..." required></textarea>
+              <button type="button" class="remove-instruction mt-1 text-gray-400 hover:text-gray-600">
+                <div class="w-6 h-6 flex items-center justify-center">
+                  <i class="ri-delete-bin-line"></i>
+                </div>
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <button type="button" id="addInstruction" class="mt-3 flex items-center text-primary hover:text-primary/80 font-medium">
+          <div class="w-5 h-5 flex items-center justify-center mr-1">
+            <i class="ri-add-line"></i>
+          </div>
+          Add Another Step
+        </button>
+      </div>
+      
+      <!-- Photo Upload Section -->
+      <div class="mb-10">
+        <h2 class="text-2xl font-bold mb-6 pb-2 border-b border-gray-100">Recipe Photo</h2>
+        <p class="text-gray-600 mb-4">Add a photo of your finished dish. High-quality images help your recipe stand out!</p>
+        
+        <div class="flex flex-col md:flex-row gap-6">
+          <div class="w-full md:w-1/2">
+            <div id="photoPreviewContainer" class="hidden mb-4 relative">
+              <img id="photoPreview" src="" alt="Recipe preview" class="w-full h-64 object-cover object-top rounded">
+              <button type="button" id="removePhoto" class="absolute top-2 right-2 bg-white bg-opacity-80 rounded-full p-2 shadow-sm">
+                <div class="w-5 h-5 flex items-center justify-center text-gray-600">
+                  <i class="ri-close-line"></i>
+                </div>
+              </button>
+            </div>
+            
+            <div id="photoUploadContainer" class="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center">
+              <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-primary bg-opacity-10 rounded-full text-primary">
+                <i class="ri-image-add-line text-3xl"></i>
+              </div>
+              <p class="text-gray-600 mb-4">Drag and drop your photo here, or click to browse</p>
+              <label class="custom-file-upload">
+                <input type="file" id="recipePhoto" name="recipePhoto" accept="image/*">
+                <button type="button" class="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-50 !rounded-button whitespace-nowrap">
+                  Choose Photo
+                </button>
+              </label>
+            </div>
+          </div>
+          
+          <div class="w-full md:w-1/2">
+            <div class="bg-gray-50 p-6 rounded-lg h-full">
+              <h3 class="font-semibold text-lg mb-4">Photo Tips</h3>
+              <ul class="space-y-3 text-gray-600">
+                <li class="flex items-start">
+                  <div class="w-5 h-5 flex items-center justify-center text-primary mr-2 mt-0.5">
+                    <i class="ri-check-line"></i>
+                  </div>
+                  Use natural lighting for the best results
+                </li>
+                <li class="flex items-start">
+                  <div class="w-5 h-5 flex items-center justify-center text-primary mr-2 mt-0.5">
+                    <i class="ri-check-line"></i>
+                  </div>
+                  Take photos from multiple angles
+                </li>
+                <li class="flex items-start">
+                  <div class="w-5 h-5 flex items-center justify-center text-primary mr-2 mt-0.5">
+                    <i class="ri-check-line"></i>
+                  </div>
+                  Show the texture and details of your dish
+                </li>
+                <li class="flex items-start">
+                  <div class="w-5 h-5 flex items-center justify-center text-primary mr-2 mt-0.5">
+                    <i class="ri-check-line"></i>
+                  </div>
+                  Use simple props that don't distract from the food
+                </li>
+                <li class="flex items-start">
+                  <div class="w-5 h-5 flex items-center justify-center text-primary mr-2 mt-0.5">
+                    <i class="ri-check-line"></i>
+                  </div>
+                  Make sure your photo is at least 1200×800 pixels
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Nutrition Information Section -->
+      <div class="mb-10">
+        <h2 class="text-2xl font-bold mb-6 pb-2 border-b border-gray-100">Nutrition Information</h2>
+        <p class="text-gray-600 mb-4">Provide nutritional details per serving (optional).</p>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div>
+            <label for="calories" class="block text-gray-700 font-medium mb-2">Calories</label>
+            <div class="flex">
+              <input type="number" id="calories" name="calories" min="0" class="w-full px-4 py-3 border border-gray-200 rounded-l text-gray-700" placeholder="e.g. 350">
+              <span class="bg-gray-50 px-3 py-3 border border-l-0 border-gray-200 rounded-r text-gray-500">kcal</span>
+            </div>
+          </div>
+          <div>
+            <label for="protein" class="block text-gray-700 font-medium mb-2">Protein</label>
+            <div class="flex">
+              <input type="number" id="protein" name="protein" min="0" step="0.1" class="w-full px-4 py-3 border border-gray-200 rounded-l text-gray-700" placeholder="e.g. 25">
+              <span class="bg-gray-50 px-3 py-3 border border-l-0 border-gray-200 rounded-r text-gray-500">g</span>
+            </div>
+          </div>
+          <div>
+            <label for="carbs" class="block text-gray-700 font-medium mb-2">Carbs</label>
+            <div class="flex">
+              <input type="number" id="carbs" name="carbs" min="0" step="0.1" class="w-full px-4 py-3 border border-gray-200 rounded-l text-gray-700" placeholder="e.g. 40">
+              <span class="bg-gray-50 px-3 py-3 border border-l-0 border-gray-200 rounded-r text-gray-500">g</span>
+            </div>
+          </div>
+          <div>
+            <label for="fat" class="block text-gray-700 font-medium mb-2">Fat</label>
+            <div class="flex">
+              <input type="number" id="fat" name="fat" min="0" step="0.1" class="w-full px-4 py-3 border border-gray-200 rounded-l text-gray-700" placeholder="e.g. 15">
+              <span class="bg-gray-50 px-3 py-3 border border-l-0 border-gray-200 rounded-r text-gray-500">g</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Additional Information Section -->
+      <div class="mb-10">
+        <h2 class="text-2xl font-bold mb-6 pb-2 border-b border-gray-100">Additional Information</h2>
+        
+        <div class="mb-6">
+          <label for="recipeTips" class="block text-gray-700 font-medium mb-2">Tips & Notes (Optional)</label>
+          <textarea id="recipeTips" name="recipeTips" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded text-gray-700 resize-none" placeholder="Share any helpful tips, substitutions, or additional notes about your recipe"></textarea>
+        </div>
+        
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Tags (Optional)</label>
+          <p class="text-gray-600 text-sm mb-3">Add tags to help others discover your recipe</p>
+          <div class="flex flex-wrap gap-2 mb-2">
+            <div class="tag-item bg-gray-100 px-3 py-1 rounded-full flex items-center">
+              <span class="text-gray-700">Quick</span>
+              <button type="button" class="ml-1 text-gray-500 hover:text-gray-700">
+                <div class="w-4 h-4 flex items-center justify-center">
+                  <i class="ri-close-line"></i>
+                </div>
+              </button>
+            </div>
+            <div class="tag-item bg-gray-100 px-3 py-1 rounded-full flex items-center">
+              <span class="text-gray-700">Family-Friendly</span>
+              <button type="button" class="ml-1 text-gray-500 hover:text-gray-700">
+                <div class="w-4 h-4 flex items-center justify-center">
+                  <i class="ri-close-line"></i>
+                </div>
+              </button>
+            </div>
+          </div>
+          <div class="flex">
+            <input type="text" id="tagInput" class="flex-grow px-4 py-2 border border-gray-200 rounded-l text-gray-700 text-sm" placeholder="Type a tag and press Enter">
+            <button type="button" id="addTag" class="bg-gray-100 px-3 py-2 border border-l-0 border-gray-200 rounded-r text-gray-700 hover:bg-gray-200">
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Submit Section -->
+      <div class="border-t border-gray-100 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex items-start">
+          <input type="checkbox" id="termsAgree" name="termsAgree" class="custom-checkbox mt-1" required>
+          <label for="termsAgree" class="ml-2 text-gray-600 text-sm">
+            I confirm this is my original recipe and I have the rights to share it
+          </label>
+        </div>
+        <div class="flex gap-3">
+          <button type="button" id="saveAsDraft" class="px-6 py-3 border border-gray-200 text-gray-700 rounded hover:bg-gray-50 !rounded-button whitespace-nowrap">
+            Save as Draft
+          </button>
+          <button type="submit" class="px-6 py-3 bg-primary text-white rounded hover:bg-primary/90 !rounded-button whitespace-nowrap">
+            Submit Recipe
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer class="bg-white border-t border-gray-100 py-12">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row justify-between gap-8">
+      <div class="max-w-xs">
+        <a href="#" class="text-3xl font-['Pacifico'] text-primary mb-4 inline-flex items-center gap-2">
+          <div class="w-8 h-8 flex items-center justify-center">
+            <i class="ri-restaurant-2-line"></i>
+          </div>
+          Savory
+        </a>
+        <p class="text-gray-600 mb-4">Your go-to source for delicious recipes and culinary inspiration.</p>
+        <div class="flex gap-4">
+          <a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200">
+            <i class="ri-facebook-fill text-gray-600"></i>
+          </a>
+          <a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200">
+            <i class="ri-instagram-line text-gray-600"></i>
+          </a>
+          <a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200">
+            <i class="ri-pinterest-line text-gray-600"></i>
+          </a>
+          <a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200">
+            <i class="ri-youtube-line text-gray-600"></i>
+          </a>
+        </div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Quick Links</h3>
+        <ul class="space-y-2">
+          <li><a href="http://127.0.0.1:5500/breakfast.html" data-readdy="true" class="text-gray-600 hover:text-primary">Home</a></li>
+          <li><a href="#" class="text-gray-600 hover:text-primary">Recipes</a></li>
+          <li><a href="#" class="text-gray-600 hover:text-primary">About Us</a></li>
+          <li><a href="#" class="text-gray-600 hover:text-primary">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Categories</h3>
+        <ul class="space-y-2">
+          <li><a href="#" class="text-gray-600 hover:text-primary">Breakfast</a></li>
+          <li><a href="#" class="text-gray-600 hover:text-primary">Lunch</a></li>
+          <li><a href="#" class="text-gray-600 hover:text-primary">Dinner</a></li>
+          <li><a href="#" class="text-gray-600 hover:text-primary">Desserts</a></li>
+          <li><a href="#" class="text-gray-600 hover:text-primary">Vegetarian</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Subscribe</h3>
+        <p class="text-gray-600 mb-4">Get our latest recipes and cooking tips straight to your inbox.</p>
+        <div class="flex">
+          <input type="email" placeholder="Your email" class="px-4 py-2 border border-gray-200 rounded-l-button text-sm flex-grow">
+          <button class="bg-primary text-white px-4 py-2 rounded-r-button whitespace-nowrap">Subscribe</button>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-gray-100 mt-12 pt-6 text-center text-gray-500">
+      <p>&copy; 2025 Culinary Delights. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Success Modal -->
+<div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg p-8 max-w-md w-full">
+    <div class="text-center mb-6">
+      <div class="w-16 h-16 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="ri-check-line text-primary text-3xl"></i>
+      </div>
+      <h2 class="text-2xl font-bold mb-2">Recipe Submitted!</h2>
+      <p class="text-gray-600">Thank you for sharing your recipe with our community. It will be reviewed shortly.</p>
+    </div>
+    <div class="flex justify-center">
+      <a href="https://readdy.ai/home/9f98c022-dd32-4743-b482-45dc347a11f3/9c034a62-7a67-41de-b7fa-3272911b0b02" data-readdy="true">
+        <button class="px-6 py-3 bg-primary text-white rounded hover:bg-primary/90 !rounded-button whitespace-nowrap">
+          Back to Recipes
+        </button>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Character counter for description
+  const descriptionField = document.getElementById('recipeDescription');
+  const descriptionCount = document.getElementById('descriptionCount');
+  
+  descriptionField.addEventListener('input', function() {
+    const count = this.value.length;
+    descriptionCount.textContent = count;
+    
+    if (count > 200) {
+      descriptionCount.classList.add('text-primary');
+      this.value = this.value.substring(0, 200);
+      descriptionCount.textContent = 200;
+    } else {
+      descriptionCount.classList.remove('text-primary');
+    }
+  });
+  
+  // Add ingredient functionality
+  const addIngredientBtn = document.getElementById('addIngredient');
+  const ingredientsContainer = document.getElementById('ingredientsContainer');
+  
+  addIngredientBtn.addEventListener('click', function() {
+    const newIngredient = document.createElement('div');
+    newIngredient.className = 'ingredient-item mb-3 flex items-center';
+    newIngredient.innerHTML = `
+      <input type="text" name="ingredients[]" class="flex-grow px-4 py-3 border border-gray-200 rounded text-gray-700" placeholder="e.g. 1/2 cup sugar" required>
+      <button type="button" class="remove-ingredient ml-2 text-gray-400 hover:text-gray-600">
+        <div class="w-8 h-8 flex items-center justify-center">
+          <i class="ri-delete-bin-line"></i>
+        </div>
+      </button>
+    `;
+    ingredientsContainer.appendChild(newIngredient);
+    
+    // Focus the new input
+    const newInput = newIngredient.querySelector('input');
+    newInput.focus();
+    
+    updateRemoveButtons();
+  });
+  
+  // Remove ingredient functionality
+  ingredientsContainer.addEventListener('click', function(e) {
+    if (e.target.closest('.remove-ingredient')) {
+      e.target.closest('.ingredient-item').remove();
+      updateRemoveButtons();
+    }
+  });
+  
+  function updateRemoveButtons() {
+    const ingredients = document.querySelectorAll('.ingredient-item');
+    if (ingredients.length <= 1) {
+      ingredients[0].querySelector('.remove-ingredient').classList.add('hidden');
+    } else {
+      ingredients.forEach(item => {
+        item.querySelector('.remove-ingredient').classList.remove('hidden');
+      });
+    }
+  }
+  
+  // Add instruction functionality
+  const addInstructionBtn = document.getElementById('addInstruction');
+  const instructionsContainer = document.getElementById('instructionsContainer');
+  
+  addInstructionBtn.addEventListener('click', function() {
+    const instructionItems = document.querySelectorAll('.instruction-item');
+    const newIndex = instructionItems.length + 1;
+    
+    const newInstruction = document.createElement('div');
+    newInstruction.className = 'instruction-item mb-4 flex';
+    newInstruction.innerHTML = `
+      <div class="flex-shrink-0 mr-3 mt-3">
+        <div class="w-8 h-8 bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary font-semibold">
+          ${newIndex}
+        </div>
+      </div>
+      <div class="flex-grow">
+        <textarea name="instructions[]" rows="2" class="w-full px-4 py-3 border border-gray-200 rounded text-gray-700 resize-none" placeholder="Describe the next step of your recipe..." required></textarea>
+        <button type="button" class="remove-instruction mt-1 text-gray-400 hover:text-gray-600">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-delete-bin-line"></i>
+          </div>
+          Remove
+        </button>
+      </div>
+    `;
+    instructionsContainer.appendChild(newInstruction);
+    
+    // Focus the new textarea
+    const newTextarea = newInstruction.querySelector('textarea');
+    newTextarea.focus();
+    
+    updateInstructionNumbers();
+    updateRemoveInstructionButtons();
+  });
+  
+  // Remove instruction functionality
+  instructionsContainer.addEventListener('click', function(e) {
+    if (e.target.closest('.remove-instruction')) {
+      e.target.closest('.instruction-item').remove();
+      updateInstructionNumbers();
+      updateRemoveInstructionButtons();
+    }
+  });
+  
+  function updateInstructionNumbers() {
+    const instructions = document.querySelectorAll('.instruction-item');
+    instructions.forEach((item, index) => {
+      item.querySelector('.w-8.h-8').textContent = index + 1;
+    });
+  }
+  
+  function updateRemoveInstructionButtons() {
+    const instructions = document.querySelectorAll('.instruction-item');
+    if (instructions.length <= 1) {
+      instructions[0].querySelector('.remove-instruction').classList.add('hidden');
+    } else {
+      instructions.forEach(item => {
+        item.querySelector('.remove-instruction').classList.remove('hidden');
+      });
+    }
+  }
+  
+  // Photo upload preview
+  const recipePhotoInput = document.getElementById('recipePhoto');
+  const photoPreview = document.getElementById('photoPreview');
+  const photoPreviewContainer = document.getElementById('photoPreviewContainer');
+  const photoUploadContainer = document.getElementById('photoUploadContainer');
+  const removePhotoBtn = document.getElementById('removePhoto');
+  
+  recipePhotoInput.addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        photoPreview.src = e.target.result;
+        photoPreviewContainer.classList.remove('hidden');
+        photoUploadContainer.classList.add('hidden');
+      }
+      
+      reader.readAsDataURL(this.files[0]);
+    }
+  });
+  
+  removePhotoBtn.addEventListener('click', function() {
+    photoPreview.src = '';
+    recipePhotoInput.value = '';
+    photoPreviewContainer.classList.add('hidden');
+    photoUploadContainer.classList.remove('hidden');
+  });
+  
+  // Drag and drop functionality for photo upload
+  const dropArea = document.getElementById('photoUploadContainer');
+  
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, preventDefaults, false);
+  });
+  
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropArea.addEventListener(eventName, highlight, false);
+  });
+  
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, unhighlight, false);
+  });
+  
+  function highlight() {
+    dropArea.classList.add('border-primary');
+  }
+  
+  function unhighlight() {
+    dropArea.classList.remove('border-primary');
+  }
+  
+  dropArea.addEventListener('drop', handleDrop, false);
+  
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    
+    if (files && files[0]) {
+      recipePhotoInput.files = files;
+      const event = new Event('change');
+      recipePhotoInput.dispatchEvent(event);
+    }
+  }
+  
+  // Tags functionality
+  const tagInput = document.getElementById('tagInput');
+  const addTagBtn = document.getElementById('addTag');
+  
+  function addTag(tagText) {
+    if (!tagText.trim()) return;
+    
+    const tagsContainer = document.querySelector('.flex.flex-wrap.gap-2');
+    const tagElement = document.createElement('div');
+    tagElement.className = 'tag-item bg-gray-100 px-3 py-1 rounded-full flex items-center';
+    tagElement.innerHTML = `
+      <span class="text-gray-700">${tagText.trim()}</span>
+      <button type="button" class="ml-1 text-gray-500 hover:text-gray-700">
+        <div class="w-4 h-4 flex items-center justify-center">
+          <i class="ri-close-line"></i>
+        </div>
+      </button>
+    `;
+    
+    tagsContainer.appendChild(tagElement);
+    tagInput.value = '';
+    
+    // Add event listener to remove button
+    const removeBtn = tagElement.querySelector('button');
+    removeBtn.addEventListener('click', function() {
+      tagElement.remove();
+    });
+  }
+  
+  addTagBtn.addEventListener('click', function() {
+    addTag(tagInput.value);
+  });
+  
+  tagInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addTag(this.value);
+    }
+  });
+  
+  // Form submission
+  const recipeForm = document.getElementById('recipeForm');
+  const successModal = document.getElementById('successModal');
+  const saveAsDraftBtn = document.getElementById('saveAsDraft');
+  
+  recipeForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Form validation would go here
+    
+    // Show success modal
+    successModal.classList.remove('hidden');
+  });
+  
+  saveAsDraftBtn.addEventListener('click', function() {
+    // Save as draft functionality would go here
+    alert('Recipe saved as draft!');
+  });
+  
+  // Initialize
+  updateRemoveButtons();
+  updateRemoveInstructionButtons();
+});
+</script>
+</body>
+</html>

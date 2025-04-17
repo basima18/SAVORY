@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Culinary Delights | Recipe Book</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#FF7A50',secondary:'#4A6FA5'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Poppins', sans-serif;
+background-color: #FDFBF9;
+}
+button.active {
+background-color: #FF7A50;
+color: white;
+border-color: #FF7A50;
+}
+h1, h2, h3, h4 {
+font-family: 'Playfair Display', serif;
+}
+.recipe-card {
+transition: all 0.3s ease;
+}
+.recipe-card:hover {
+transform: translateY(-5px);
+}
+.recipe-card img {
+transition: all 0.5s ease;
+}
+.recipe-card:hover img {
+transform: scale(1.05);
+}
+input[type="checkbox"] {
+appearance: none;
+width: 1.25rem;
+height: 1.25rem;
+border: 2px solid #E5E7EB;
+border-radius: 4px;
+margin-right: 0.5rem;
+position: relative;
+cursor: pointer;
+vertical-align: middle;
+}
+input[type="checkbox"]:checked {
+background-color: #FF7A50;
+border-color: #FF7A50;
+}
+input[type="checkbox"]:checked::after {
+content: "";
+position: absolute;
+left: 6px;
+top: 2px;
+width: 5px;
+height: 10px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+.search-input:focus {
+outline: none;
+}
+</style>
+</head>
+<body>
+<header class="bg-white shadow-sm sticky top-0 z-50">
+<div class="container mx-auto px-4 py-4 flex items-center justify-between">
+<a href="#" class="text-3xl font-['Pacifico'] text-primary flex items-center gap-2">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-restaurant-2-line"></i>
+</div>
+Savory
+</a>
+<div class="relative w-full max-w-md mx-4">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3">
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-search-line"></i>
+</div>
+</div>
+<input id="searchInput" type="text" class="search-input w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded text-sm" placeholder="Search for recipes...">
+<div id="clearSearch" class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer hidden">
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-close-line"></i>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a href="https://readdy.ai/home/9f98c022-dd32-4743-b482-45dc347a11f3/36755631-5e0a-42a3-bd42-3651e262726a" data-readdy="true">
+<button class="bg-primary text-white px-4 py-2 !rounded-button whitespace-nowrap">
+Submit Recipe
+</button>
+</a>
+<div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
+<i class="ri-user-line text-gray-600"></i>
+</div>
+</div>
+</div>
+</header>
+<main class="container mx-auto px-4 py-8">
+<section class="mb-12">
+<div class="flex flex-col items-center text-center mb-8">
+<h1 class="text-4xl md:text-5xl font-bold mb-4">Discover Delicious Recipes</h1>
+<p class="text-gray-600 max-w-2xl">Explore our collection of mouth-watering recipes from around the world. From quick weeknight dinners to impressive dinner party dishes.</p>
+</div>
+<div class="flex flex-wrap gap-4 mb-8 justify-center">
+<button id="allRecipesBtn" class="px-4 py-2 bg-white shadow-sm border border-gray-100 hover:bg-gray-50 !rounded-button whitespace-nowrap active">
+All Recipes
+</button>
+<button class="px-4 py-2 bg-white shadow-sm border border-gray-100 hover:bg-gray-50 !rounded-button whitespace-nowrap">
+Breakfast
+</button>
+<button class="px-4 py-2 bg-white shadow-sm border border-gray-100 hover:bg-gray-50 !rounded-button whitespace-nowrap">
+Lunch
+</button>
+<button class="px-4 py-2 bg-white shadow-sm border border-gray-100 hover:bg-gray-50 !rounded-button whitespace-nowrap">
+Dinner
+</button>
+<button class="px-4 py-2 bg-white shadow-sm border border-gray-100 hover:bg-gray-50 !rounded-button whitespace-nowrap">
+Desserts
+</button>
+<button class="px-4 py-2 bg-white shadow-sm border border-gray-100 hover:bg-gray-50 !rounded-button whitespace-nowrap">
+Vegetarian
+</button>
+</div>
+<div id="recipeGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Recipe cards will be populated here -->
+</div>
+</section>
+</main>
+<footer class="bg-white border-t border-gray-100 py-12">
+<div class="container mx-auto px-4">
+<div class="flex flex-col md:flex-row justify-between gap-8">
+<div class="max-w-xs">
+<a href="#" class="text-3xl font-['Pacifico'] text-primary mb-4 inline-flex items-center gap-2">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-restaurant-2-line"></i>
+</div>
+Savory
+</a>
+<p class="text-gray-600 mb-4">Your go-to source for delicious recipes and culinary inspiration.</p>
+<div class="flex gap-4">
+<a href="https://www.facebook.com/sharer/sharer.php?u=https://savory.recipes" target="_blank" id="facebookShareBtn" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200">
+<i class="ri-facebook-fill text-gray-600"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200">
+<i class="ri-instagram-line text-gray-600"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200">
+<i class="ri-pinterest-line text-gray-600"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200">
+<i class="ri-youtube-line text-gray-600"></i>
+</a>
+</div>
+</div>
+<div>
+<h3 class="font-semibold text-lg mb-4">Quick Links</h3>
+<ul class="space-y-2">
+<li><a href="#" id="homeLink" class="text-gray-600 hover:text-primary">Home</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary">Recipes</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary">About Us</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary">Contact</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-semibold text-lg mb-4">Categories</h3>
+<ul class="space-y-2">
+<li><a href="#" id="footerBreakfastLink" class="text-gray-600 hover:text-primary">Breakfast</a></li>
+<li><a href="#" id="footerLunchLink" class="text-gray-600 hover:text-primary">Lunch</a></li>
+<li><a href="#" id="footerDinnerLink" class="text-gray-600 hover:text-primary">Dinner</a></li>
+<li><a href="#" id="footerDessertsLink" class="text-gray-600 hover:text-primary">Desserts</a></li>
+<li><a href="#" id="footerVegetarianLink" class="text-gray-600 hover:text-primary">Vegetarian</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-semibold text-lg mb-4">Subscribe</h3>
+<p class="text-gray-600 mb-4">Get our latest recipes and cooking tips straight to your inbox.</p>
+<div class="flex relative">
+<input type="email" placeholder="Your email" class="px-4 py-2 border border-gray-200 rounded-l-button text-sm flex-grow">
+<button id="subscribeButton" class="bg-primary text-white px-4 py-2 rounded-r-button whitespace-nowrap">Subscribe</button>
+<div id="emailError" class="hidden absolute left-0 -bottom-8 bg-white border border-red-200 text-red-500 text-sm px-3 py-1 rounded shadow-sm">
+Please enter a valid email address
+</div>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 mt-12 pt-6 text-center text-gray-500">
+<p>&copy; 2025 Culinary Delights. All rights reserved.</p>
+</div>
+</div>
+</footer>
+<!-- Subscribe Confirmation Dialog -->
+<div id="subscribeDialog" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+<div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
+<div class="w-16 h-16 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-6">
+<div class="w-8 h-8 flex items-center justify-center text-primary">
+<i class="ri-mail-check-line text-2xl"></i>
+</div>
+</div>
+<h3 class="text-2xl font-bold text-center mb-4">Thank You for Subscribing!</h3>
+<p class="text-gray-600 text-center mb-6">You'll receive our latest recipes and cooking tips straight to your inbox. Here's what you can expect:</p>
+<ul class="space-y-3 mb-6">
+<li class="flex items-center gap-2 text-gray-600">
+<div class="w-5 h-5 flex items-center justify-center text-primary">
+<i class="ri-check-line"></i>
+</div>
+Weekly recipe collections
+</li>
+<li class="flex items-center gap-2 text-gray-600">
+<div class="w-5 h-5 flex items-center justify-center text-primary">
+<i class="ri-check-line"></i>
+</div>
+Seasonal cooking guides
+</li>
+<li class="flex items-center gap-2 text-gray-600">
+<div class="w-5 h-5 flex items-center justify-center text-primary">
+<i class="ri-check-line"></i>
+</div>
+Expert cooking tips and tricks
+</li>
+</ul>
+<button id="closeSubscribeDialog" class="w-full bg-primary text-white py-3 !rounded-button whitespace-nowrap">Close</button>
+</div>
+</div>
+<!-- Recipe Detail Template (Hidden) -->
+<div id="recipeDetail" class="fixed inset-0 bg-white z-50 overflow-y-auto hidden">
+<div class="relative">
+<div class="absolute top-4 left-4 z-10">
+<button id="backButton" class="bg-white bg-opacity-80 text-gray-800 px-4 py-2 rounded-full shadow-md flex items-center gap-2 !rounded-button whitespace-nowrap">
+<i class="ri-arrow-left-line"></i> Back
+</button>
+</div>
+<div id="recipeHero" class="h-[50vh] bg-cover bg-center relative">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+<h1 id="recipeTitle" class="text-3xl md:text-4xl font-bold mb-2"></h1>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-time-line"></i>
+</div>
+<span id="recipeCookTime"></span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-fire-line"></i>
+</div>
+<span id="recipeCalories"></span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-user-line"></i>
+</div>
+<span id="recipeServings"></span>
+</div>
+</div>
+</div>
+</div>
+<div class="container mx-auto px-4 py-8">
+<div class="flex flex-col md:flex-row gap-8">
+<div class="md:w-1/3">
+<div class="bg-white rounded-lg shadow-sm p-6 sticky top-24">
+<h2 class="text-2xl font-bold mb-6">Ingredients</h2>
+<div id="recipeIngredients" class="space-y-3"></div>
+<div class="mt-8">
+<h3 class="text-lg font-semibold mb-4">Adjust Servings</h3>
+<div class="flex items-center">
+<button id="decreaseServings" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-l !rounded-button whitespace-nowrap">
+<i class="ri-subtract-line"></i>
+</button>
+<input id="servingsInput" type="number" value="4" min="1" max="20" class="w-12 h-8 text-center border-y border-gray-100">
+<button id="increaseServings" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-r !rounded-button whitespace-nowrap">
+<i class="ri-add-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="md:w-2/3">
+<div class="mb-12">
+<h2 class="text-2xl font-bold mb-6">Instructions</h2>
+<div id="recipeInstructions" class="space-y-8"></div>
+</div>
+<div class="mb-12">
+<h2 class="text-2xl font-bold mb-6">Nutrition Information</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-gray-50 p-4 rounded">
+<p class="text-gray-500 text-sm">Calories</p>
+<p id="nutritionCalories" class="font-semibold"></p>
+</div>
+<div class="bg-gray-50 p-4 rounded">
+<p class="text-gray-500 text-sm">Protein</p>
+<p id="nutritionProtein" class="font-semibold"></p>
+</div>
+<div class="bg-gray-50 p-4 rounded">
+<p class="text-gray-500 text-sm">Carbs</p>
+<p id="nutritionCarbs" class="font-semibold"></p>
+</div>
+<div class="bg-gray-50 p-4 rounded">
+<p class="text-gray-500 text-sm">Fat</p>
+<p id="nutritionFat" class="font-semibold"></p>
+</div>
+</div>
+</div>
+<div>
+<h2 class="text-2xl font-bold mb-6">Comments</h2>
+<div class="mb-6">
+<textarea class="w-full p-4 border border-gray-200 rounded resize-none" rows="3" placeholder="Share your experience with this recipe..."></textarea>
+<div class="flex justify-end mt-2">
+<button class="bg-primary text-white px-6 py-2 !rounded-button whitespace-nowrap">Post Comment</button>
+</div>
+</div>
+<div id="recipeComments" class="space-y-6">
+<div class="border-t border-gray-100 pt-6">
+<div class="flex gap-4">
+<div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full flex-shrink-0">
+<i class="ri-user-line text-gray-600"></i>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h4 class="font-semibold">Emily Johnson</h4>
+<span class="text-gray-400 text-sm">April 15, 2025</span>
+</div>
+<p class="text-gray-600">This recipe is amazing! I made it for my family last weekend and everyone loved it. I added a bit more garlic than called for and it was perfect.</p>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 pt-6">
+<div class="flex gap-4">
+<div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full flex-shrink-0">
+<i class="ri-user-line text-gray-600"></i>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h4 class="font-semibold">Michael Rodriguez</h4>
+<span class="text-gray-400 text-sm">April 10, 2025</span>
+</div>
+<p class="text-gray-600">I've tried many similar recipes before, but this one is definitely the best! The flavors are perfectly balanced and the instructions were easy to follow.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+// Recipe data
+const recipes = [
+{
+id: 1,
+title: "Creamy Tuscan Chicken Pasta",
+description: "A rich and creamy pasta dish with sun-dried tomatoes, spinach, and tender chicken.",
+image: "https://readdy.ai/api/search-image?query=creamy%20tuscan%20chicken%20pasta%20with%20sun-dried%20tomatoes%20and%20spinach%20in%20a%20white%20bowl%2C%20top%20view%2C%20professional%20food%20photography%2C%20soft%20natural%20lighting%2C%20garnished%20with%20fresh%20herbs%2C%20on%20a%20rustic%20wooden%20table&width=600&height=400&seq=1&orientation=landscape",
+cookTime: "30 minutes",
+calories: "520 kcal",
+servings: 4,
+category: "Dinner",
+ingredients: [
+"8 oz fettuccine pasta",
+"2 boneless, skinless chicken breasts",
+"2 tbsp olive oil",
+"3 cloves garlic, minced",
+"1 cup heavy cream",
+"1/2 cup chicken broth",
+"1/2 cup grated Parmesan cheese",
+"1/2 cup sun-dried tomatoes, chopped",
+"2 cups fresh spinach",
+"1 tsp Italian seasoning",
+"Salt and pepper to taste"
+],
+instructions: [
+"Cook pasta according to package directions. Drain and set aside.",
+"Season chicken breasts with salt, pepper, and Italian seasoning. Heat olive oil in a large skillet over medium-high heat.",
+"Add chicken to the skillet and cook for 5-6 minutes per side until golden and cooked through. Remove from pan and slice into strips.",
+"In the same skillet, add minced garlic and cook for 30 seconds until fragrant.",
+"Add heavy cream and chicken broth, bring to a simmer and cook for 2-3 minutes.",
+"Stir in Parmesan cheese until melted and smooth. Add sun-dried tomatoes and spinach, cooking until spinach is wilted.",
+"Return sliced chicken to the pan and add cooked pasta. Toss everything together until well coated with sauce.",
+"Serve hot, garnished with additional Parmesan cheese and fresh herbs if desired."
+],
+nutrition: {
+calories: "520 kcal",
+protein: "32g",
+carbs: "42g",
+fat: "26g"
+}
+},
+{
+id: 2,
+title: "Blueberry Lemon Pancakes",
+description: "Fluffy pancakes bursting with fresh blueberries and bright lemon flavor.",
+image: "https://readdy.ai/api/search-image?query=stack%20of%20fluffy%20blueberry%20lemon%20pancakes%20on%20a%20white%20plate%2C%20drizzled%20with%20maple%20syrup%2C%20fresh%20blueberries%20scattered%20around%2C%20bright%20natural%20lighting%2C%20professional%20food%20photography%2C%20breakfast%20setting&width=600&height=400&seq=2&orientation=landscape",
+cookTime: "20 minutes",
+calories: "380 kcal",
+servings: 4,
+category: "Breakfast",
+ingredients: [
+"2 cups all-purpose flour",
+"2 tbsp sugar",
+"1 tbsp baking powder",
+"1/2 tsp salt",
+"2 large eggs",
+"1 3/4 cups milk",
+"1/4 cup melted butter",
+"1 tbsp lemon zest",
+"2 tbsp fresh lemon juice",
+"1 1/2 cups fresh blueberries",
+"Maple syrup for serving"
+],
+instructions: [
+"In a large bowl, whisk together flour, sugar, baking powder, and salt.",
+"In another bowl, beat the eggs, then add milk, melted butter, lemon zest, and lemon juice.",
+"Pour the wet ingredients into the dry ingredients and stir just until combined. Do not overmix; a few lumps are okay.",
+"Gently fold in 1 cup of the blueberries.",
+"Heat a griddle or large non-stick skillet over medium heat. Lightly grease with butter or cooking spray.",
+"Pour 1/4 cup of batter onto the griddle for each pancake. Cook until bubbles form on the surface, about 2-3 minutes.",
+"Flip and cook until the other side is golden brown, about 1-2 minutes more.",
+"Serve warm, topped with remaining fresh blueberries and maple syrup."
+],
+nutrition: {
+calories: "380 kcal",
+protein: "10g",
+carbs: "58g",
+fat: "12g"
+}
+},
+{
+id: 3,
+title: "Mediterranean Quinoa Salad",
+description: "A refreshing and healthy salad packed with vegetables, feta cheese, and a zesty lemon dressing.",
+image: "https://readdy.ai/api/search-image?query=mediterranean%20quinoa%20salad%20in%20a%20large%20white%20bowl%2C%20with%20colorful%20vegetables%2C%20feta%20cheese%2C%20olives%2C%20and%20herbs%2C%20bright%20natural%20lighting%2C%20overhead%20view%2C%20professional%20food%20photography%2C%20on%20a%20light%20background&width=600&height=400&seq=3&orientation=landscape",
+cookTime: "25 minutes",
+calories: "320 kcal",
+servings: 6,
+category: "Lunch",
+ingredients: [
+"1 cup quinoa, rinsed",
+"2 cups vegetable broth",
+"1 cucumber, diced",
+"1 pint cherry tomatoes, halved",
+"1 red bell pepper, diced",
+"1/2 red onion, finely diced",
+"1/2 cup kalamata olives, pitted and sliced",
+"1/2 cup crumbled feta cheese",
+"1/4 cup fresh parsley, chopped",
+"1/4 cup fresh mint, chopped",
+"3 tbsp olive oil",
+"2 tbsp fresh lemon juice",
+"1 tsp dried oregano",
+"Salt and pepper to taste"
+],
+instructions: [
+"In a medium saucepan, combine quinoa and vegetable broth. Bring to a boil, then reduce heat to low, cover, and simmer for 15 minutes until liquid is absorbed.",
+"Remove from heat and let stand, covered, for 5 minutes. Fluff with a fork and transfer to a large bowl to cool.",
+"While the quinoa is cooling, prepare the dressing by whisking together olive oil, lemon juice, dried oregano, salt, and pepper in a small bowl.",
+"Add cucumber, cherry tomatoes, red bell pepper, red onion, olives, feta cheese, parsley, and mint to the cooled quinoa.",
+"Pour the dressing over the salad and toss gently to combine.",
+"Taste and adjust seasoning if needed. Chill for at least 30 minutes before serving to allow flavors to meld.",
+"Serve cold or at room temperature, garnished with additional feta cheese and herbs if desired."
+],
+nutrition: {
+calories: "320 kcal",
+protein: "9g",
+carbs: "35g",
+fat: "16g"
+}
+},
+{
+id: 4,
+title: "Classic Beef Lasagna",
+description: "Layers of pasta, rich meat sauce, and creamy cheese make this lasagna a family favorite.",
+image: "https://readdy.ai/api/search-image?query=slice%20of%20homemade%20beef%20lasagna%20on%20a%20plate%2C%20showing%20layers%20of%20pasta%2C%20meat%20sauce%2C%20and%20melted%20cheese%2C%20steam%20rising%2C%20professional%20food%20photography%2C%20warm%20lighting%2C%20garnished%20with%20fresh%20basil&width=600&height=400&seq=4&orientation=landscape",
+cookTime: "1 hour 30 minutes",
+calories: "580 kcal",
+servings: 8,
+category: "Dinner",
+ingredients: [
+"12 lasagna noodles",
+"1 lb ground beef",
+"1 onion, finely chopped",
+"3 cloves garlic, minced",
+"2 cans (15 oz each) tomato sauce",
+"1 can (6 oz) tomato paste",
+"2 tsp dried basil",
+"1 tsp dried oregano",
+"1/2 tsp salt",
+"1/4 tsp black pepper",
+"2 eggs",
+"15 oz ricotta cheese",
+"4 cups shredded mozzarella cheese, divided",
+"1/2 cup grated Parmesan cheese",
+"2 tbsp fresh parsley, chopped"
+],
+instructions: [
+"Preheat oven to 375°F (190°C). Cook lasagna noodles according to package directions; drain and set aside.",
+"In a large skillet, brown ground beef, onion, and garlic over medium heat until meat is no longer pink. Drain excess fat.",
+"Stir in tomato sauce, tomato paste, basil, oregano, salt, and pepper. Bring to a boil, reduce heat, and simmer for 20 minutes.",
+"In a bowl, combine eggs, ricotta cheese, 2 cups mozzarella cheese, Parmesan cheese, and parsley.",
+"Spread 1 cup of meat sauce in the bottom of a 9x13 inch baking dish. Arrange 3 noodles over the sauce.",
+"Layer with 1/3 of the ricotta mixture, 1 cup meat sauce, and 1/2 cup mozzarella. Repeat layers twice.",
+"Top with remaining 3 noodles, meat sauce, and mozzarella cheese.",
+"Cover with foil and bake for 25 minutes. Remove foil and bake for an additional 25 minutes until bubbly and cheese is golden.",
+"Let stand for 15 minutes before serving to allow the lasagna to set."
+],
+nutrition: {
+calories: "580 kcal",
+protein: "38g",
+carbs: "45g",
+fat: "28g"
+}
+},
+{
+id: 5,
+title: "Chocolate Chip Cookies",
+description: "Soft and chewy cookies with melty chocolate chips - a timeless classic.",
+image: "https://readdy.ai/api/search-image?query=stack%20of%20homemade%20chocolate%20chip%20cookies%20on%20a%20white%20plate%2C%20some%20cookies%20broken%20showing%20melty%20chocolate%20chips%2C%20professional%20food%20photography%2C%20soft%20natural%20lighting%2C%20warm%20inviting%20atmosphere&width=600&height=400&seq=5&orientation=landscape",
+cookTime: "25 minutes",
+calories: "180 kcal",
+servings: 24,
+category: "Desserts",
+ingredients: [
+"2 1/4 cups all-purpose flour",
+"1 tsp baking soda",
+"1 tsp salt",
+"1 cup unsalted butter, softened",
+"3/4 cup granulated sugar",
+"3/4 cup packed brown sugar",
+"1 tsp vanilla extract",
+"2 large eggs",
+"2 cups semi-sweet chocolate chips",
+"1 cup chopped walnuts (optional)"
+],
+instructions: [
+"Preheat oven to 375°F (190°C). Line baking sheets with parchment paper.",
+"In a small bowl, whisk together flour, baking soda, and salt; set aside.",
+"In a large bowl, beat butter, granulated sugar, brown sugar, and vanilla extract until creamy.",
+"Add eggs one at a time, beating well after each addition.",
+"Gradually beat in flour mixture until well combined.",
+"Stir in chocolate chips and walnuts if using.",
+"Drop rounded tablespoons of dough onto prepared baking sheets, spacing them about 2 inches apart.",
+"Bake for 9-11 minutes or until golden brown around the edges but still soft in the center.",
+"Cool on baking sheets for 2 minutes, then transfer to wire racks to cool completely.",
+"Store in an airtight container at room temperature for up to 5 days."
+],
+nutrition: {
+calories: "180 kcal",
+protein: "2g",
+carbs: "24g",
+fat: "10g"
+}
+},
+{
+id: 6,
+title: "Roasted Vegetable Buddha Bowl",
+description: "A nourishing bowl packed with roasted vegetables, quinoa, and a tahini dressing.",
+image: "https://readdy.ai/api/search-image?query=vegetarian%20buddha%20bowl%20with%20roasted%20vegetables%2C%20quinoa%2C%20avocado%2C%20and%20tahini%20dressing%20in%20a%20white%20bowl%2C%20overhead%20view%2C%20bright%20natural%20lighting%2C%20professional%20food%20photography%2C%20colorful%20healthy%20meal&width=600&height=400&seq=6&orientation=landscape",
+cookTime: "40 minutes",
+calories: "420 kcal",
+servings: 4,
+category: "Vegetarian",
+ingredients: [
+"1 cup quinoa, rinsed",
+"2 cups vegetable broth",
+"1 sweet potato, diced",
+"1 red bell pepper, sliced",
+"1 zucchini, sliced",
+"1 red onion, sliced",
+"2 tbsp olive oil",
+"1 tsp cumin",
+"1 tsp paprika",
+"1/2 tsp garlic powder",
+"Salt and pepper to taste",
+"1 avocado, sliced",
+"1 cup chickpeas, drained and rinsed",
+"2 cups baby spinach",
+"1/4 cup tahini",
+"2 tbsp lemon juice",
+"1 tbsp maple syrup",
+"2-3 tbsp water",
+"1/4 cup pumpkin seeds"
+],
+instructions: [
+"Preheat oven to 425°F (220°C). Line a baking sheet with parchment paper.",
+"In a medium saucepan, combine quinoa and vegetable broth. Bring to a boil, then reduce heat to low, cover, and simmer for 15 minutes until liquid is absorbed.",
+"Toss sweet potato, bell pepper, zucchini, and red onion with olive oil, cumin, paprika, garlic powder, salt, and pepper.",
+"Spread vegetables on the prepared baking sheet and roast for 25-30 minutes, stirring halfway through, until tender and lightly browned.",
+"Make the tahini dressing by whisking together tahini, lemon juice, maple syrup, and enough water to reach desired consistency. Season with salt to taste.",
+"Assemble bowls by dividing quinoa among 4 bowls. Top with roasted vegetables, chickpeas, spinach, and avocado slices.",
+"Drizzle with tahini dressing and sprinkle with pumpkin seeds before serving."
+],
+nutrition: {
+calories: "420 kcal",
+protein: "12g",
+carbs: "52g",
+fat: "20g"
+}
+}
+];
+// Populate recipe grid
+function populateRecipeGrid(recipesToShow = recipes) {
+const recipeGrid = document.getElementById('recipeGrid');
+recipeGrid.innerHTML = '';
+recipesToShow.forEach(recipe => {
+const recipeCard = document.createElement('div');
+recipeCard.className = 'recipe-card bg-white rounded-lg shadow-sm overflow-hidden';
+recipeCard.innerHTML = `
+<div class="relative h-48 overflow-hidden">
+<img src="${recipe.image}" alt="${recipe.title}" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-lg font-bold">${recipe.title}</h3>
+<span class="bg-gray-100 text-xs px-2 py-1 rounded">${recipe.category}</span>
+</div>
+<p class="text-gray-600 text-sm mb-3">${recipe.description}</p>
+<div class="flex justify-between items-center">
+<div class="flex items-center text-sm text-gray-500">
+<div class="w-4 h-4 flex items-center justify-center mr-1">
+<i class="ri-time-line"></i>
+</div>
+${recipe.cookTime}
+</div>
+<button class="text-primary hover:text-primary-dark text-sm font-medium" data-recipe-id="${recipe.id}">View Recipe →</button>
+</div>
+</div>
+`;
+recipeGrid.appendChild(recipeCard);
+// Add click event to view recipe button
+const viewButton = recipeCard.querySelector('button');
+viewButton.addEventListener('click', () => showRecipeDetail(recipe.id));
+});
+}
+// Show recipe detail
+function showRecipeDetail(recipeId) {
+const recipe = recipes.find(r => r.id === recipeId);
+if (!recipe) return;
+// Set recipe hero
+const recipeHero = document.getElementById('recipeHero');
+recipeHero.style.backgroundImage = `url(${recipe.image})`;
+// Set recipe title and meta
+document.getElementById('recipeTitle').textContent = recipe.title;
+document.getElementById('recipeCookTime').textContent = recipe.cookTime;
+document.getElementById('recipeCalories').textContent = recipe.calories;
+document.getElementById('recipeServings').textContent = `${recipe.servings} servings`;
+// Set ingredients
+const ingredientsContainer = document.getElementById('recipeIngredients');
+ingredientsContainer.innerHTML = '';
+recipe.ingredients.forEach(ingredient => {
+const ingredientEl = document.createElement('div');
+ingredientEl.className = 'flex items-start';
+ingredientEl.innerHTML = `
+<input type="checkbox" class="mt-1">
+<span class="text-gray-700">${ingredient}</span>
+`;
+ingredientsContainer.appendChild(ingredientEl);
+});
+// Set instructions
+const instructionsContainer = document.getElementById('recipeInstructions');
+instructionsContainer.innerHTML = '';
+recipe.instructions.forEach((instruction, index) => {
+const instructionEl = document.createElement('div');
+instructionEl.className = 'flex';
+instructionEl.innerHTML = `
+<div class="flex-shrink-0 mr-4">
+<div class="w-8 h-8 bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary font-semibold">
+${index + 1}
+</div>
+</div>
+<div class="text-gray-700">${instruction}</div>
+`;
+instructionsContainer.appendChild(instructionEl);
+});
+// Set nutrition info
+document.getElementById('nutritionCalories').textContent = recipe.nutrition.calories;
+document.getElementById('nutritionProtein').textContent = recipe.nutrition.protein;
+document.getElementById('nutritionCarbs').textContent = recipe.nutrition.carbs;
+document.getElementById('nutritionFat').textContent = recipe.nutrition.fat;
+// Show recipe detail
+document.getElementById('recipeDetail').classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+// Scroll to top
+window.scrollTo(0, 0);
+}
+// Hide recipe detail
+function hideRecipeDetail() {
+document.getElementById('recipeDetail').classList.add('hidden');
+document.body.style.overflow = 'auto';
+}
+// Search functionality
+function setupSearch() {
+const searchInput = document.getElementById('searchInput');
+const clearSearch = document.getElementById('clearSearch');
+searchInput.addEventListener('input', () => {
+const searchTerm = searchInput.value.toLowerCase().trim();
+if (searchTerm) {
+clearSearch.classList.remove('hidden');
+const filteredRecipes = recipes.filter(recipe =>
+recipe.title.toLowerCase().includes(searchTerm) ||
+recipe.description.toLowerCase().includes(searchTerm) ||
+recipe.category.toLowerCase().includes(searchTerm)
+);
+populateRecipeGrid(filteredRecipes);
+} else {
+clearSearch.classList.add('hidden');
+populateRecipeGrid();
+}
+});
+clearSearch.addEventListener('click', () => {
+searchInput.value = '';
+clearSearch.classList.add('hidden');
+populateRecipeGrid();
+});
+}
+// Servings adjustment
+function setupServingsAdjustment() {
+const decreaseBtn = document.getElementById('decreaseServings');
+const increaseBtn = document.getElementById('increaseServings');
+const servingsInput = document.getElementById('servingsInput');
+decreaseBtn.addEventListener('click', () => {
+if (parseInt(servingsInput.value) > 1) {
+servingsInput.value = parseInt(servingsInput.value) - 1;
+}
+});
+increaseBtn.addEventListener('click', () => {
+if (parseInt(servingsInput.value) < 20) {
+servingsInput.value = parseInt(servingsInput.value) + 1;
+}
+});
+}
+// Back button
+document.getElementById('backButton').addEventListener('click', hideRecipeDetail);
+// Category filter functionality
+function setupCategoryFilter() {
+const categoryButtons = document.querySelectorAll('button');
+categoryButtons.forEach(button => {
+if (button.textContent.trim() === 'All Recipes' ||
+button.textContent.trim() === 'Breakfast' ||
+button.textContent.trim() === 'Lunch' ||
+button.textContent.trim() === 'Dinner' ||
+button.textContent.trim() === 'Desserts' ||
+button.textContent.trim() === 'Vegetarian') {
+button.addEventListener('click', () => {
+const category = button.textContent.trim();
+categoryButtons.forEach(btn => btn.classList.remove('active'));
+button.classList.add('active');
+if (category === 'All Recipes') {
+populateRecipeGrid(recipes);
+} else {
+const filteredRecipes = recipes.filter(recipe => recipe.category === category);
+populateRecipeGrid(filteredRecipes);
+}
+});
+}
+});
+}
+// Subscribe functionality
+function setupSubscribe() {
+const subscribeButton = document.getElementById('subscribeButton');
+const subscribeDialog = document.getElementById('subscribeDialog');
+const closeSubscribeDialog = document.getElementById('closeSubscribeDialog');
+const emailInput = subscribeButton.previousElementSibling;
+const emailError = document.getElementById('emailError');
+function validateEmail(email) {
+return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+}
+function showEmailError() {
+emailError.classList.remove('hidden');
+setTimeout(() => {
+emailError.classList.add('hidden');
+}, 3000);
+}
+subscribeButton.addEventListener('click', () => {
+const email = emailInput.value.trim();
+if (!email) {
+showEmailError();
+return;
+}
+if (!validateEmail(email)) {
+showEmailError();
+return;
+}
+subscribeDialog.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+emailInput.value = '';
+});
+closeSubscribeDialog.addEventListener('click', () => {
+subscribeDialog.classList.add('hidden');
+document.body.style.overflow = 'auto';
+});
+subscribeDialog.addEventListener('click', (e) => {
+if (e.target === subscribeDialog) {
+subscribeDialog.classList.add('hidden');
+document.body.style.overflow = 'auto';
+}
+});
+emailInput.addEventListener('input', () => {
+emailError.classList.add('hidden');
+});
+}
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+populateRecipeGrid();
+setupSearch();
+setupServingsAdjustment();
+setupCategoryFilter();
+setupSubscribe();
+setupFacebookShare();
+// Home link smooth scroll
+document.getElementById('homeLink').addEventListener('click', (e) => {
+e.preventDefault();
+window.scrollTo({
+top: 0,
+behavior: 'smooth'
+});
+});
+// Footer category links
+const footerCategoryLinks = {
+'footerBreakfastLink': 'Breakfast',
+'footerLunchLink': 'Lunch',
+'footerDinnerLink': 'Dinner',
+'footerDessertsLink': 'Desserts',
+'footerVegetarianLink': 'Vegetarian'
+};
+Object.entries(footerCategoryLinks).forEach(([linkId, category]) => {
+document.getElementById(linkId).addEventListener('click', (e) => {
+e.preventDefault();
+window.scrollTo({
+top: 0,
+behavior: 'smooth'
+});
+// Find and click the corresponding category button
+const categoryButtons = document.querySelectorAll('button');
+categoryButtons.forEach(button => {
+if (button.textContent.trim() === category) {
+button.click();
+}
+});
+});
+});
+});
+
+function setupFacebookShare() {
+  const facebookBtn = document.getElementById('facebookShareBtn');
+  facebookBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const recipeDetail = document.getElementById('recipeDetail');
+    const url = recipeDetail.classList.contains('hidden') 
+      ? 'https://savory.recipes'
+      : `https://savory.recipes/recipe/${document.getElementById('recipeTitle').textContent.toLowerCase().replace(/\s+/g, '-')}`;
+    
+    const width = 550;
+    const height = 450;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+    
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      'facebook-share-dialog',
+      `width=${width},height=${height},top=${top},left=${left}`
+    );
+  });
+}
+</script>
+</body>
+</html>
